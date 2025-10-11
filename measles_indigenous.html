@@ -565,7 +565,16 @@
                 console.log('NNDSS data loaded, length:', nndssText.length);
                 console.log('First 500 chars:', nndssText.substring(0, 500));
                 
-                const nndssResult = Papa.parse(nndssText, { header: true, dynamicTyping: false });
+                const nndssResult = Papa.parse(nndssText, { 
+                    header: true, 
+                    dynamicTyping: false,
+                    skipEmptyLines: true,
+                    quoteChar: '"',
+                    escapeChar: '"',
+                    delimiter: ',',
+                    newline: '
+'
+                });
                 console.log('NNDSS parsed rows:', nndssResult.data.length);
                 console.log('NNDSS columns:', nndssResult.meta.fields);
                 
