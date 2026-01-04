@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Public Health Surveillance as a Socio-Technical Ecosystem</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow: hidden;
+        }
+
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: white;
+            padding: 60px 80px;
+            overflow: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-header {
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 48px;
+            color: #2d3748;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: 36px;
+            color: #4a5568;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 28px;
+            color: #667eea;
+            margin: 25px 0 15px 0;
+        }
+
+        .subtitle {
+            font-size: 24px;
+            color: #718096;
+            margin-bottom: 15px;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+        }
+
+        ul {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        li {
+            font-size: 22px;
+            line-height: 1.8;
+            margin: 15px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #fef3c7 0%, #fef3c7 100%);
+            background-repeat: no-repeat;
+            background-size: 100% 40%;
+            background-position: 0 90%;
+            padding: 2px 6px;
+        }
+
+        .emphasis {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .box {
+            background: #f7fafc;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .framework-box {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .framework-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 12px;
+        }
+
+        .framework-content {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #4a5568;
+        }
+
+        .image-placeholder {
+            background: #e2e8f0;
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            color: #718096;
+            font-style: italic;
+            margin: 20px 0;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        button:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-number {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            font-size: 18px;
+            color: #718096;
+            z-index: 1000;
+        }
+
+        .footer-info {
+            margin-top: auto;
+            padding-top: 30px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 16px;
+            color: #718096;
+        }
+
+        .title-slide {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .title-slide h1 {
+            color: white;
+            font-size: 56px;
+            margin-bottom: 30px;
+        }
+
+        .title-slide .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 28px;
+        }
+
+        .author-info {
+            margin-top: 60px;
+            font-size: 22px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 18px;
+        }
+
+        .table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table tr:hover {
+            background: #f7fafc;
+        }
+
+        .quote {
+            font-size: 28px;
+            font-style: italic;
+            color: #4a5568;
+            border-left: 4px solid #667eea;
+            padding-left: 30px;
+            margin: 30px 0;
+            line-height: 1.6;
+        }
+
+        .ecosystem-layer {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px 0;
+            position: relative;
+        }
+
+        .layer-label {
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .key-finding {
+            background: #fef3c7;
+            border-left: 5px solid #f59e0b;
+            padding: 20px;
+            margin: 20px 0;
+            font-size: 20px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        
+        <!-- Slide 1: Title -->
+        <div class="slide active title-slide">
+            <h1>Real-Time Public Health Surveillance<br/>as a Socio-Technical Ecosystem</h1>
+            <div class="subtitle">Tracking County-Level Measles Cases in the U.S.</div>
+            <div class="author-info">
+                <strong>Farzin Ahmadi, PhD</strong><br/>
+                Assistant Professor of Healthcare Management<br/>
+                Towson University<br/><br/>
+                Co-authors: Ensheng Dong, PhD & Lauren M. Gardner, PhD<br/>
+                Johns Hopkins University<br/><br/>
+                HICSS-59 Symposium: Socio-Technical Ecosystems for Future Digital Health<br/>
+                January 6, 2026
+            </div>
+        </div>
+
+        <!-- Slide 2: The Challenge - Setting Context -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>The Public Health Challenge</h2>
+            </div>
+            <div class="content">
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-number">2,071</div>
+                        <div class="stat-label">Confirmed Cases in 2025</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">30+</div>
+                        <div class="stat-label">Years Since Last Major Outbreak</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">42</div>
+                        <div class="stat-label">Affected Jurisdictions</div>
+                    </div>
+                </div>
+
+                <div class="box">
+                    <h3>The Surveillance Gap</h3>
+                    <ul>
+                        <li>CDC provides <span class="emphasis">national and state-level</span> data weekly</li>
+                        <li>Measles outbreaks are <span class="highlight">highly localized</span> – county-level granularity essential</li>
+                        <li>Fragmented reporting across <span class="emphasis">50+ jurisdictions</span></li>
+                        <li>No centralized, real-time county-level tracking existed</li>
+                    </ul>
+                </div>
+
+                <div class="quote">
+                    "Public health surveillance data have historically been provided at aggregated levels that mask the localized nature of disease transmission."
+                </div>
+            </div>
+            <div class="footer-info">
+                Speaker Notes: Start with the magnitude of the 2025 outbreak. Emphasize that this is the largest outbreak in 30+ years. The key gap: CDC gives us state data, but outbreaks happen in counties. West Texas outbreak spread to other regions - we needed granular tracking.
+            </div>
+        </div>
+
+        <!-- Slide 3: Framing as Socio-Technical Ecosystem -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>A Socio-Technical Ecosystem Approach</h2>
+            </div>
+            <div class="content">
+                <div class="image-placeholder" style="height: 200px;">
+                    [INSERT: eFigure 1 - Data Pipeline Architecture from Supplement]<br/>
+                    Four-component system showing data sources, collection, processing, and dissemination
+                </div>
+
+                <div class="two-column">
+                    <div>
+                        <div class="ecosystem-layer">
+                            <div class="layer-label">CYBER SPACE</div>
+                            <h3>Technical Infrastructure</h3>
+                            <ul>
+                                <li>156 unique data sources</li>
+                                <li>Automated web scraping (Python/Selenium)</li>
+                                <li>Real-time data integration</li>
+                                <li>Interactive dashboard & open repository</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="ecosystem-layer">
+                            <div class="layer-label">PHYSICAL SPACE</div>
+                            <h3>Social Systems</h3>
+                            <ul>
+                                <li>50+ health departments with different policies</li>
+                                <li>Manual curation for unstructured data</li>
+                                <li>Community trust & transparency</li>
+                                <li>Privacy regulations (HIPAA compliance)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="key-finding">
+                    <strong>Key Insight:</strong> Success required integrating hard domains (automation, databases, APIs) with soft domains (policy variations, reporting standards, public health workflows)
+                </div>
+            </div>
+            <div class="footer-info">
+                Speaker Notes: This is where we connect to the symposium theme. Our system is a perfect example of cyber-physical integration. The technical challenge (scraping 156 sources) couldn't be solved without understanding the social systems (how health departments work, their constraints, their reporting cultures).
+            </div>
+        </div>
+
+        <!-- Slide 4: The Heterogeneity Challenge -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Navigating Heterogeneous Reporting Ecosystems</h2>
+            </div>
+            <div class="content">
+                <div class="three-column">
+                    <div class="framework-box">
+                        <div class="framework-title">📊 Data Formats</div>
+                        <div class="framework-content">
+                            • Tableau dashboards (Kansas)<br/>
+                            • Plotly visualizations (New Mexico)<br/>
+                            • PDF press releases<br/>
+                            • HTML tables<br/>
+                            • News articles
+                        </div>
+                    </div>
+                    <div class="framework-box">
+                        <div class="framework-title">⏱️ Temporal Variation</div>
+                        <div class="framework-content">
+                            • Daily updates<br/>
+                            • Weekly bulletins<br/>
+                            • Ad-hoc announcements<br/>
+                            • Rash onset dates vs. reporting dates
+                        </div>
+                    </div>
+                    <div class="framework-box">
+                        <div class="framework-title">🗺️ Geographic Granularity</div>
+                        <div class="framework-content">
+                            • County-level (most states)<br/>
+                            • Health regions (Tennessee)<br/>
+                            • Health districts (Utah)<br/>
+                            • State-only (Oklahoma)<br/>
+                            • Suppression policies (Kansas: <5 cases)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="image-placeholder" style="height: 250px; margin-top: 30px;">
+                    [INSERT: eFigure 2 - Growth of Data Sources over Time]<br/>
+                    Shows expansion from 0 to 156 sources between January-August 2025
+                </div>
+
+                <div class="box">
+                    <strong>Socio-Technical Solution:</strong> Jurisdiction-specific protocols tailored to each state's capabilities, policies, and technical infrastructure. We adapted to their ecosystems rather than forcing standardization.
+                </div>
+            </div>
+            <div class="footer-info">
+                Speaker Notes: This slide shows the complexity. We're not just dealing with technical differences - each format reflects policy decisions, resource constraints, and organizational culture. Kansas suppresses small counts for privacy. Oklahoma doesn't have county-level infrastructure. These are social choices embedded in technical systems.
+            </div>
+        </div>
+
+        <!-- Slide 5: Infrastructure & Methodology -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Building an Agile, Flexible Infrastructure</h2>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div>
+                        <h3>Data Collection (Twice Weekly)</h3>
+                        <ul>
+                            <li><span class="emphasis">Automated scraping</span> for structured sources</li>
+                            <li><span class="emphasis">Manual curation</span> for unstructured data</li>
+                            <li><span class="emphasis">AI-powered alerts</span> (LLM Deep Research, HealthMap, ProMED)</li>
+                            <li><span class="emphasis">Quality assurance</span> with validation against CDC</li>
+                        </ul>
+
+                        <h3 style="margin-top: 30px;">Data Standardization</h3>
+                        <ul>
+                            <li>FIPS codes for geographic consistency</li>
+                            <li>CSTE case definitions</li>
+                            <li>MMWR epidemiological weeks</li>
+                            <li>Population-weighted coordinates</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Public Dissemination</h3>
+                        <ul>
+                            <li><span class="highlight">Interactive Dashboard</span><br/>(launched May 28, 2025)</li>
+                            <li><span class="highlight">GitHub Repository</span><br/>(open data, full provenance)</li>
+                            <li><span class="highlight">Real-time updates</span><br/>(Mondays & Thursdays)</li>
+                        </ul>
+
+                        <div class="box" style="margin-top: 30px;">
+                            <strong>Published in JAMA</strong><br/>
+                            September 15, 2025<br/>
+                            "Tracking County-Level Measles Cases in the US"<br/><br/>
+                            <em>Validates the infrastructure's impact on public health surveillance</em>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-info">
+                Speaker Notes: Our infrastructure balances automation with human judgment. We can't fully automate because formats change, new sources emerge, and context matters. This is the agility and flexibility the symposium talks about - we built systems that can adapt as the outbreak evolves.
+            </div>
+        </div>
+
+        <!-- Slide 6: Validation & Impact -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Validation & Real-World Impact</h2>
+            </div>
+            <div class="content">
+                <div class="image-placeholder" style="height: 300px;">
+                    [INSERT: eFigure 3 - JHU vs CDC Comparison Chart]<br/>
+                    Weekly cumulative measles cases: JHU (blue) vs CDC (red) for weeks 1-31, 2025<br/>
+                    Shows close alignment with JHU consistently reporting higher early in outbreak
+                </div>
+
+                <div class="two-column" style="margin-top: 30px;">
+                    <div>
+                        <h3>Validation Results</h3>
+                        <ul>
+                            <li><span class="emphasis">Close alignment</span> with CDC national totals</li>
+                            <li><span class="highlight">Earlier detection</span> during outbreak growth (weeks 1-15)</li>
+                            <li>Demonstrates <span class="emphasis">completeness</span> of decentralized approach</li>
+                            <li>Provides <span class="highlight">enhanced geographic resolution</span> that CDC cannot</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Public Health Impact</h3>
+                        <ul>
+                            <li>Enables <span class="emphasis">localized interventions</span></li>
+                            <li>Supports <span class="emphasis">contact tracing</span> in affected counties</li>
+                            <li>Informs <span class="emphasis">vaccination campaigns</span></li>
+                            <li>Powers <span class="emphasis">transmission modeling</span></li>
+                            <li>Provides <span class="emphasis">situation awareness</span> for health departments</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="key-finding">
+                    Our county-level system provides equivalent completeness to centralized CDC surveillance while offering critical sub-state geographic detail for response efforts.
+                </div>
+            </div>
+            <div class="footer-info">
+                Speaker Notes: This validates our approach scientifically. But more importantly - we were FASTER. During the critical early phase, we detected cases before CDC reported them nationally. That's the value of a distributed, agile ecosystem. When West Texas outbreak began spreading, counties could see it in real-time.
+            </div>
+        </div>
+
+        <!-- Slide 7: Dashboard Showcase -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Interactive Dashboard: Democratizing Surveillance Data</h2>
+            </div>
+            <div class="content">
+                <div class="image-placeholder" style="height: 250px;">
+                    [INSERT: Screenshot from Figure A - County-level map]<br/>
+                    Interactive map showing cumulative cases with imported (red) vs local (blue) transmission
+                </div>
+
+                <div class="two-column" style="margin-top: 20px;">
+                    <div>
+                        <h3>Key Features</h3>
+                        <ul>
+                            <li><span class="emphasis">County-level mapping</span> with cumulative & 2-week views</li>
+                            <li><span class="emphasis">Imported vs. local</span> transmission visualization</li>
+                            <li><span class="emphasis">Time series analysis</span> (national & state-level)</li>
+                            <li><span class="emphasis">Demographic breakdowns</span> (age, vaccination status)</li>
+                            <li><span class="emphasis">Data export</span> capabilities</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Accessible to Multiple Stakeholders</h3>
+                        <ul>
+                            <li>Public health officials</li>
+                            <li>Healthcare providers</li>
+                            <li>Researchers & modelers</li>
+                            <li>Media & journalists</li>
+                            <li>General public</li>
+                        </ul>
+                        <div class="box" style="margin-top: 20px;">
+                            <strong>Open Science Approach</strong><br/>
+                            • Full data provenance documented<br/>
+                            • GitHub repository with all sources<br/>
+                            • CC BY 4.0 license<br/>
+                            • Reproducible methodology
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-info">
+                Speaker Notes: The dashboard is the interface between our cyber-physical ecosystem and society. It's not just for experts - anyone can explore the data. This transparency builds trust and enables distributed decision-making. Local health officers can see their counties. Parents can understand their community risk.
+            </div>
+        </div>
+
+        <!-- Slide 8: Ecosystem Resilience & Challenges -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Building Resilience: Challenges & Adaptations</h2>
+            </div>
+            <div class="content">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Challenge</th>
+                            <th>Ecosystem Response</th>
+                            <th>Socio-Technical Integration</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Format changes</strong><br/>States modify dashboards</td>
+                            <td>Modular scripts with alerts<br/>Rapid redeployment (hours)</td>
+                            <td>Technical flexibility + human monitoring</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Privacy policies</strong><br/>Suppression for n<5</td>
+                            <td>"Unknown County" aggregation<br/>Respect jurisdiction boundaries</td>
+                            <td>Social norms embedded in data structure</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Retrospective corrections</strong><br/>Cases reassigned</td>
+                            <td>Git version control<br/>Documented audit trail</td>
+                            <td>Technical system supports transparency</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Unstructured sources</strong><br/>PDF press releases</td>
+                            <td>Hybrid automation + manual<br/>AI-assisted extraction</td>
+                            <td>Humans in the loop for context</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Temporal misalignment</strong><br/>Report date vs onset date</td>
+                            <td>Parallel time series<br/>Clear documentation</td>
+                            <td>Different needs for different users</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="key-finding" style="margin-top: 30px;">
+                    <strong>Resilience Strategy:</strong> Design for heterogeneity rather than forcing standardization. Build flexibility into technical infrastructure while respecting social and regulatory constraints.
+                </div>
+            </div>
+            <div class="footer-info">
+                Speaker Notes: This is the resilience the symposium emphasizes. We didn't try to force all 50 states into one format. We built an ecosystem that's resilient BECAUSE it's flexible. When Kansas changes their dashboard, we adapt. When privacy laws differ, we accommodate. That's how you build systems that last.
+            </div>
+        </div>
+
+        <!-- Slide 9: Lessons for Digital Health Ecosystems -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Lessons for Future Digital Health Ecosystems</h2>
+            </div>
+            <div class="content">
+                <div class="three-column">
+                    <div class="framework-box">
+                        <div class="framework-title">🔧 Technical Agility</div>
+                        <div class="framework-content">
+                            <strong>What worked:</strong><br/>
+                            • Modular architecture<br/>
+                            • Hybrid automation<br/>
+                            • Version control<br/>
+                            • Open APIs<br/><br/>
+                            <strong>What's needed:</strong><br/>
+                            • Standardized APIs across jurisdictions<br/>
+                            • Real-time data feeds<br/>
+                            • Interoperability protocols
+                        </div>
+                    </div>
+                    <div class="framework-box">
+                        <div class="framework-title">🤝 Social Integration</div>
+                        <div class="framework-content">
+                            <strong>What worked:</strong><br/>
+                            • Respecting local policies<br/>
+                            • Building trust through transparency<br/>
+                            • Open data sharing<br/><br/>
+                            <strong>What's needed:</strong><br/>
+                            • Harmonized privacy standards<br/>
+                            • Federated governance models<br/>
+                            • Public health informatician capacity
+                        </div>
+                    </div>
+                    <div class="framework-box">
+                        <div class="framework-title">⚖️ Regulatory Compliance</div>
+                        <div class="framework-content">
+                            <strong>What worked:</strong><br/>
+                            • HIPAA-compliant aggregation<br/>
+                            • Public domain data only<br/>
+                            • State-by-state adaptation<br/><br/>
+                            <strong>What's needed:</strong><br/>
+                            • Clearer guidelines for public health surveillance<br/>
+                            • Balance transparency & privacy<br/>
+                            • Streamlined data sharing agreements
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box" style="margin-top: 30px;">
+                    <h3>From Measles to Broader Applications</h3>
+                    <div class="two-column">
+                        <div>
+                            <strong>This framework applies to:</strong>
+                            <ul style="margin-left: 20px;">
+                                <li>Other infectious diseases</li>
+                                <li>Chronic disease surveillance</li>
+                                <li>Healthcare quality metrics</li>
+                                <li>Pharmaceutical supply chains</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <strong>Core principle:</strong><br/>
+                            <em>Successful digital health ecosystems integrate technical infrastructure with social systems, regulatory frameworks, and human workflows - not as separate layers, but as interdependent components of a complex adaptive system.</em>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-info">
+                Speaker Notes: These lessons extend beyond measles. Every digital health ecosystem faces this same challenge: integrating data from heterogeneous sources with different technical capabilities, regulatory environments, and organizational cultures. The socio-technical approach isn't optional - it's essential.
+            </div>
+        </div>
+
+        <!-- Slide 10: Future Directions -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Future Directions & Research Opportunities</h2>
+            </div>
+            <div class="content">
+                <div class="two-column">
+                    <div>
+                        <h3>Immediate Extensions (2026)</h3>
+                        <ul>
+                            <li><span class="emphasis">Geographic expansion</span><br/>Additional states with refined data</li>
+                            <li><span class="emphasis">Enhanced demographics</span><br/>Race/ethnicity, gender (where available)</li>
+                            <li><span class="emphasis">Predictive modeling</span><br/>Outbreak risk forecasting</li>
+                            <li><span class="emphasis">Health equity analysis</span><br/>Disparities in surveillance & access</li>
+                        </ul>
+
+                        <h3 style="margin-top: 30px;">Technical Innovations</h3>
+                        <ul>
+                            <li>AI/ML for automated format detection</li>
+                            <li>Natural language processing for unstructured sources</li>
+                            <li>Federated learning for privacy-preserving analytics</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Research Questions</h3>
+                        <div class="framework-box">
+                            <strong>Surveillance Science</strong>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>How does reporting heterogeneity affect outbreak detection?</li>
+                                <li>What drives jurisdictional differences in transparency?</li>
+                                <li>Can we quantify the value of granular data?</li>
+                            </ul>
+                        </div>
+                        <div class="framework-box">
+                            <strong>Health Equity</strong>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>Which communities are invisible in current surveillance?</li>
+                                <li>How do data gaps perpetuate disparities?</li>
+                                <li>What governance models promote equitable data sharing?</li>
+                            </ul>
+                        </div>
+                        <div class="framework-box">
+                            <strong>Ecosystem Design</strong>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>Optimal balance between centralized & distributed surveillance?</li>
+                                <li>How to incentivize data standardization without mandates?</li>
+                                <li>Sustainable funding models for public health informatics?</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-info">
+                Speaker Notes: We're just scratching the surface. The infrastructure exists - now we can ask deeper questions about surveillance equity, optimal ecosystem design, and how to scale this approach. I'm particularly interested in the health equity angle: not all states report demographics, which means we can't see disparities in those jurisdictions.
+            </div>
+        </div>
+
+        <!-- Slide 11: Key Contributions -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Key Contributions to Digital Health Ecosystems</h2>
+            </div>
+            <div class="content">
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-number">156</div>
+                        <div class="stat-label">Unique Data Sources<br/>Integrated</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">42</div>
+                        <div class="stat-label">Jurisdictions<br/>Covered</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Open Access<br/>to Data & Code</div>
+                    </div>
+                </div>
+
+                <div class="three-column" style="margin-top: 40px;">
+                    <div class="framework-box">
+                        <div class="framework-title">📊 Methodological</div>
+                        <div class="framework-content">
+                            • First county-level real-time measles tracker<br/>
+                            • Validated against CDC<br/>
+                            • Published methodology in JAMA<br/>
+                            • Reproducible framework
+                        </div>
+                    </div>
+                    <div class="framework-box">
+                        <div class="framework-title">🔬 Theoretical</div>
+                        <div class="framework-content">
+                            • Demonstrates socio-technical integration in practice<br/>
+                            • Shows value of distributed surveillance<br/>
+                            • Models resilience through flexibility
+                        </div>
+                    </div>
+                    <div class="framework-box">
+                        <div class="framework-title">🌍 Practical</div>
+                        <div class="framework-content">
+                            • Real-world impact during outbreak<br/>
+                            • Accessible to multiple stakeholders<br/>
+                            • Template for other disease surveillance
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quote" style="margin-top: 40px;">
+                    "This project demonstrates that effective digital health ecosystems emerge not from imposing top-down technical standards, but from building flexible infrastructures that integrate diverse socio-technical components while respecting local contexts and constraints."
+                </div>
+            </div>
+            <div class="footer-info">
+                Speaker Notes: Summarize our contributions across three dimensions. We're not just publishing a paper - we've built working infrastructure that's being used during an active outbreak. And we've shown that the socio-technical approach isn't theoretical - it's practical and necessary.
+            </div>
+        </div>
+
+        <!-- Slide 12: Conclusion & Discussion -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>Conclusion: Building Agile, Flexible, Resilient Ecosystems</h2>
+            </div>
+            <div class="content">
+                <div class="box">
+                    <h3>The Measles Tracking Ecosystem as a Microcosm</h3>
+                    <p style="font-size: 20px; line-height: 1.7; margin-top: 15px;">
+                        Our measles surveillance infrastructure exemplifies the symposium's vision of <span class="highlight">cyber-physical socio-technical ecosystems</span> that integrate:
+                    </p>
+                    <div class="two-column" style="margin-top: 20px;">
+                        <ul>
+                            <li><strong>Cyber space:</strong> Real-time data streams, automated processing, open APIs</li>
+                            <li><strong>Physical space:</strong> Health departments, patients, healthcare facilities</li>
+                            <li><strong>Hard domains:</strong> Infrastructure, sensors (web scrapers), analytics</li>
+                        </ul>
+                        <ul>
+                            <li><strong>Soft domains:</strong> Policies, regulations, skills, public health workflows</li>
+                            <li><strong>Multiple actors:</strong> States, counties, researchers, public</li>
+                            <li><strong>Agility & resilience:</strong> Adapts to changes while maintaining service</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="key-finding" style="margin-top: 30px; font-size: 22px;">
+                    The future of digital health requires moving beyond technology implementation to <strong>ecosystem orchestration</strong> - designing systems that can navigate heterogeneity, adapt to change, and integrate social and technical components as interdependent parts of complex adaptive systems.
+                </div>
+
+                <div class="box" style="margin-top: 30px; background: #f0f9ff; border-color: #0ea5e9;">
+                    <h3 style="color: #0c4a6e;">Questions for Discussion</h3>
+                    <ul style="margin-top: 15px;">
+                        <li>How can we incentivize data standardization without mandating it?</li>
+                        <li>What governance models best support federated public health surveillance?</li>
+                        <li>How do we ensure health equity in decentralized surveillance ecosystems?</li>
+                        <li>What role should academia play in public health infrastructure?</li>
+                    </ul>
+                </div>
+
+                <div style="text-align: center; margin-top: 40px; font-size: 24px;">
+                    <strong>Thank you!</strong><br/><br/>
+                    📧 fahmadi@towson.edu<br/>
+                    🌐 Dashboard: publichealth.jhu.edu/ivac/resources/us-measles-tracker<br/>
+                    💻 GitHub: github.com/CSSEGISandData/measles_data
+                </div>
+            </div>
+            <div class="footer-info">
+                Speaker Notes: Bring it home. We've shown that the symposium's framework isn't just conceptual - it's how real public health infrastructure works. End with questions that invite discussion about the broader implications for digital health ecosystems. Be ready to discuss governance, sustainability, and scaling challenges.
+            </div>
+        </div>
+
+    </div>
+
+    <div class="slide-number">
+        <span id="current-slide">1</span> / <span id="total-slides">12</span>
+    </div>
+
+    <div class="navigation">
+        <button id="prev-btn" onclick="previousSlide()">← Previous</button>
+        <button id="next-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            // Update button states
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                e.preventDefault();
+                previousSlide();
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                showSlide(0);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                showSlide(totalSlides - 1);
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>
